@@ -42,3 +42,4 @@ time.sleep(3)  # 페이지가 완전히 로드될 때까지 잠시 대기
 driver.find_element(By.LINK_TEXT, '조선왕조실록').click()
 time.sleep(3)
 # dataId=ITKC_JT_A0 이런식으로 이어지는것 발견, 확인해서 쓰면 좋을듯.
+# 실록 월 일 등 어디까지 가져올 것인지?
