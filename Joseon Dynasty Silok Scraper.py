@@ -43,3 +43,10 @@ driver.find_element(By.LINK_TEXT, '조선왕조실록').click()
 time.sleep(3)
 # dataId=ITKC_JT_A0 이런식으로 이어지는것 발견, 확인해서 쓰면 좋을듯.
 # 실록 월 일 등 어디까지 가져올 것인지?
+
+
+# 태조실록 총서 첫번째 링크는 다음과 같음
+# https://db.itkc.or.kr/dir/item?itemId=JT#dir/node?grpId=&itemId=JT&gubun=book&depth=3&cate1=&cate2=&dataGubun=%EC%B5%9C%EC%A2%85%EC%A0%95%EB%B3%B4&dataId=ITKC_JT_A0_000_000_000_00010
+# 순서대로 00010부터 출발
+# 총서나 부록은 따로 긁고, 나머지 누구 몇년 몇월에 따라 최종정보만 긁어오는 식으로 하면 될듯
+# 나머지도 최종정보로 긁는 편이 좋을듯
