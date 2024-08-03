@@ -50,3 +50,13 @@ time.sleep(3)
 # 순서대로 00010부터 출발
 # 총서나 부록은 따로 긁고, 나머지 누구 몇년 몇월에 따라 최종정보만 긁어오는 식으로 하면 될듯
 # 나머지도 최종정보로 긁는 편이 좋을듯
+# 수정: https://sillok.history.go.kr/search/inspectionMonthList.do 로 들어가는게 좋을지도?
+# 여기는 클릭당 url은 안바뀌는데, 크롬드라이버의 클릭으로 돌리는 함수가 나오면 가능할까, 생각중. 지금은 보류
+
+
+# 월에 들어가면 일자가 보이고, 일자 수를 받아서 클릭하는 함수
+# 아래 full XPath
+# /html/body/div[2]/section[2]/section[2]/section/div[2]/ul - 날짜리스트, 여기 안에 <li class> 마다 클릭
+# /html/body/div[2]/section[2]/section[2]/section/div[3]/div[1] - para-block
+# /html/body/div[2]/section[2]/section[2]/section/div[3]/div[1]/div[1] - 제목
+# /html/body/div[2]/section[2]/section[2]/section/div[3]/div[1]/div[2] - 내용
