@@ -61,7 +61,15 @@ lsttest = driver.find_elements_by_css_selector('tr')
 lsttest[0].text
 lsttest.pop(0)
 len(lsttest)
+teststr = lsttest[3].text.split()
+kingnameyear = teststr[0]+' '+teststr[1]
+driver.find_element(By.LINK_TEXT, kingnameyear).click()
 # 총서 부록과 n년 텍스트 가져오는 코드는 달라야 함
+lsttest2 = driver.find_elements_by_css_selector('tr')
+for i in lsttest2:
+    print(i.text)
+len(lsttest2)
+lsttest2[2].text.split('\n')
 
 # 태조실록 총서 첫번째 링크는 다음과 같음
 # https://db.itkc.or.kr/dir/item?itemId=JT#dir/node?grpId=&itemId=JT&gubun=book&depth=3&cate1=&cate2=&dataGubun=%EC%B5%9C%EC%A2%85%EC%A0%95%EB%B3%B4&dataId=ITKC_JT_A0_000_000_000_00010
