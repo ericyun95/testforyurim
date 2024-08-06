@@ -45,6 +45,7 @@ url2 = 'https://db.itkc.or.kr/dir/item?itemId=JT#dir/list?itemId=JT&gubun=book&p
 driver.get(url2)
 # dataId=ITKC_JT_A0 이런식으로 이어지는것 발견, 확인해서 쓰면 좋을듯.
 # 실록 월 일 등 어디까지 가져올 것인지?
+#API 판단 필요
 book_list_box = driver.find_elements_by_xpath('/html/body/div[2]/section[2]/section[1]/div/div[2]/ul/li/ul')
 # 서명
 book_list = book_list_box[0].text.strip().split('\n ')
