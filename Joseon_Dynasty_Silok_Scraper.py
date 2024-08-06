@@ -25,7 +25,7 @@ options = webdriver.ChromeOptions()
 options.add_argument('--disable-gpu')
 
 driver = webdriver.Chrome(executable_path=chrome_driver_path, options=options)
-driver.quit()
+
 
 # 2024/8/1 크롬드라이버 정상작동 확인
 # 여기서부터 한국고전종합DB - https://db.itkc.or.kr/
@@ -41,10 +41,28 @@ time.sleep(3)  # 페이지가 완전히 로드될 때까지 잠시 대기
 # 조선왕조실록으로 이동
 driver.find_element(By.LINK_TEXT, '조선왕조실록').click()
 time.sleep(3)
+url2 = 'https://db.itkc.or.kr/dir/item?itemId=JT#dir/list?itemId=JT&gubun=book&pageIndex=1&pageUnit=50'
+driver.get(url2)
 # dataId=ITKC_JT_A0 이런식으로 이어지는것 발견, 확인해서 쓰면 좋을듯.
 # 실록 월 일 등 어디까지 가져올 것인지?
-book_list = driver.find_elements_by_xpath('/html/body/div[2]/section[2]/section[1]/div/div[2]/ul/li/ul')
-book_list[0].text.split('\n')
+book_list_box = driver.find_elements_by_xpath('/html/body/div[2]/section[2]/section[1]/div/div[2]/ul/li/ul')
+# 서명
+book_list = book_list_box[0].text.strip().split('\n ')
+# 서명당 클릭후 복귀
+for name in book_list:
+    driver.find_element(By.LINK_TEXT, name).click()
+    time.sleep(3)
+    driver.back()
+    time.sleep(3)
+
+driver.quit()
+driver.find_element(By.LINK_TEXT, book_list[0]).click()
+lsttest = driver.find_elements_by_css_selector('tr')
+lsttest[0].text
+lsttest.pop(0)
+len(lsttest)
+# 총서 부록과 n년 텍스트 가져오는 코드는 달라야 함
+
 # 태조실록 총서 첫번째 링크는 다음과 같음
 # https://db.itkc.or.kr/dir/item?itemId=JT#dir/node?grpId=&itemId=JT&gubun=book&depth=3&cate1=&cate2=&dataGubun=%EC%B5%9C%EC%A2%85%EC%A0%95%EB%B3%B4&dataId=ITKC_JT_A0_000_000_000_00010
 # 순서대로 00010부터 출발
