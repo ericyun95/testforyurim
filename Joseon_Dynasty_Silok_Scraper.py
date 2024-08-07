@@ -16,8 +16,8 @@ import time
 chrome_driver_path = '/Users/hyunwoongyun/Downloads/chromedriver-mac-x64/chromedriver'
 # 제 3자 보안 설정 해줘야 열림
 # ChromeDriver 서비스 설정
-service = Service(chrome_driver_path)
-service.start()
+#service = Service(chrome_driver_path)
+#service.start()
 
 options = webdriver.ChromeOptions()
 #안열리는 옵션은 잠시 끄기로 함
@@ -59,11 +59,14 @@ driver.quit()
 driver.find_element(By.LINK_TEXT, book_list[0]).click()
 lsttest = driver.find_elements_by_css_selector('tr')
 lsttest[0].text
+for i in lsttest:
+    print(i.text)
+    print('&')
 lsttest.pop(0)
 len(lsttest)
 teststr = lsttest[3].text.split()
 kingnameyear = teststr[0]+' '+teststr[1]
-driver.find_element(By.LINK_TEXT, kingnameyear).click()
+driver.find_element(By.LINK_TEXT, lsttest[2].text).click()
 # 총서 부록과 n년 텍스트 가져오는 코드는 달라야 함
 lsttest2 = driver.find_elements_by_css_selector('tr')
 for i in lsttest2:
@@ -86,3 +89,34 @@ lsttest2[2].text.split('\n')
 # /html/body/div[2]/section[2]/section[2]/section/div[3]/div[1] - para-block
 # /html/body/div[2]/section[2]/section[2]/section/div[3]/div[1]/div[1] - 제목
 # /html/body/div[2]/section[2]/section[2]/section/div[3]/div[1]/div[2] - 내용
+
+
+
+
+##########총서##############
+chonglist = driver.find_elements_by_css_selector('tr')
+for i in chonglist:
+    print(i.text)
+    print('&')
+driver.find_element(By.LINK_TEXT, chonglist[1].text).click()
+text = driver.find_elements_by_class_name('text_body')
+text[0].text
+try:
+    gakju = driver.find_elements_by_class_name('jusok-dl')
+    if gakju:
+        print(gakju[0].text)
+except:
+    pass
+len(gakju)
+for i in gakju:
+    print(i.text)
+
+textsplited = text[0].text.split('\n')
+textsplited
+with open('/Users/hyunwoongyun/yurim_project/test.txt', 'w') as f:
+    f.write(text[0].text)
+
+with open('/Users/hyunwoongyun/yurim_project/test.txt', 'a') as f:
+    for i in gakju:
+        f.write('\n')
+        f.write(i.text)
