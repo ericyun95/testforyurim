@@ -11,7 +11,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.action_chains import ActionChains
 import time
-
+import os
 # ChromeDriver 경로 설정
 chrome_driver_path = '/Users/hyunwoongyun/Downloads/chromedriver-mac-x64/chromedriver'
 # 제 3자 보안 설정 해줘야 열림
@@ -54,7 +54,7 @@ for name in book_list:
     time.sleep(3)
     driver.back()
     time.sleep(3)
-
+book_list
 driver.quit()
 driver.find_element(By.LINK_TEXT, book_list[0]).click()
 lsttest = driver.find_elements_by_css_selector('tr')
@@ -117,6 +117,32 @@ with open('/Users/hyunwoongyun/yurim_project/test.txt', 'w') as f:
     f.write(text[0].text)
 
 with open('/Users/hyunwoongyun/yurim_project/test.txt', 'a') as f:
-    for i in gakju:
-        f.write('\n')
-        f.write(i.text)
+    if gakju:
+        for i in gakju:
+            f.write('\n')
+            f.write(i.text)
+    else:
+        pass
+for i in lsttest:
+    print(i.text)
+for i in lsttest2:
+    print(i.text)
+### foldermaker - 이거 주소도 변수로 받는걸로 바꾸자
+def foldermaker(book_list):
+    for i in range(len(book_list)):
+        book_name = book_list[i]
+        if not os.path.exists(f'/Users/hyunwoongyun/yurim_project/{i+1}. {book_name}'):
+            os.mkdir(f'/Users/hyunwoongyun/yurim_project/{i+1}. {book_name}')
+foldermaker(book_list)
+#### chaptermaker
+def chaptermaker(book_list, chapter_list):
+    for i in range(len(book_list)):
+        book_name = book_list[0]
+        driver.find_element(By.LINK_TEXT, book_name).click()
+        chapterlists = driver.find_elements_by_css_selector('tr')
+        chapterlists.pop(0)
+        chapterlists.pop(0)
+        for i in lsttest:
+            print(i.text)
+            print('&')
+
