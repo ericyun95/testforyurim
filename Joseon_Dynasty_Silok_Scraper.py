@@ -127,6 +127,7 @@ for i in lsttest:
     print(i.text)
 for i in lsttest2:
     print(i.text)
+juso = '/Users/hyunwoongyun/yurim_project'
 ### foldermaker - 이거 주소도 변수로 받는걸로 바꾸자
 def foldermaker(book_list):
     for i in range(len(book_list)):
