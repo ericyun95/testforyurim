@@ -191,7 +191,35 @@ def chaptermaker(juso, book_list):
 book_list
 book_and_chapter = chaptermaker(juso, book_list) # ex) book - 태조실록, chapter - 총서, 태조 1년.......
 book_and_chapter
-def cnbscraper(): #총서, 부록 수집
+
+def cnbscraper(juso, book_now, chapter): #총서, 부록 수집
+    chonglist = driver.find_elements_by_css_selector('tr')
+    chonglist.pop(0)
+    print([i.text for i in chonglist])
+    for title in chonglist:
+        titletext = title.text
+        driver.find_element(By.LINK_TEXT, titletext).click()
+        time.sleep(3)
+        driver.execute_script('window.scrollTo(0, 3000000)')
+        wordtext = driver.find_elements_by_class_name('text_body')[0].text
+        wordtext
+        with open(f'/Users/hyunwoongyun/yurim_project/test{titletext}.txt', 'w') as f:
+            f.write(wordtext)
+        try:
+            gakju = driver.find_elements_by_class_name('jusok-dl')
+            if gakju:
+                with open(f'/Users/hyunwoongyun/yurim_project/test{title.text}.txt', 'a') as f:
+                    for i in gakju:
+                        f.write('\n')
+                        f.write(i.text)
+        except:
+            pass
+        driver.back()
+        time.sleep(2)
+
+
+
+
 
 def yearscraper(): #연도별 수집
 
@@ -200,12 +228,15 @@ def yearscraper(): #연도별 수집
 def scraper(juso, book_and_chapter):
     king_number = 1
     books = list(book_and_chapter.keys())
-    chapter_list = book_and_chapter[books[king_number-1]]
+    book_now = books[king_number-1]
+    chapter_list = book_and_chapter[book_now]
     for chapter in chapter_list:
         if chapter in ['총서', '부록']:
             cnbscraper()
+            driver.back()
         else : 
             yearscreaper()
+            driver.back()
 
 
 driver.get(url)
