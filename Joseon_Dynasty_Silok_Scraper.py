@@ -127,23 +127,62 @@ for i in lsttest:
     print(i.text)
 for i in lsttest2:
     print(i.text)
+#########아래부터 정리본###########
+print("JDS Scraper")
+import sys
+import selenium
+selenium.__version__
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.action_chains import ActionChains
+import time
+import os
+
 juso = '/Users/hyunwoongyun/yurim_project'
+chrome_driver_path = '/Users/hyunwoongyun/Downloads/chromedriver-mac-x64/chromedriver'
+url = 'https://db.itkc.or.kr/dir/item?itemId=JT#dir/list?itemId=JT&gubun=book&pageIndex=1&pageUnit=50'
+options = webdriver.ChromeOptions()
+options.add_argument('--disable-gpu')
+driver = webdriver.Chrome(executable_path=chrome_driver_path, options=options)
+driver.get(url)
+book_list_box = driver.find_elements_by_xpath('/html/body/div[2]/section[2]/section[1]/div/div[2]/ul/li/ul')
+#서명
+book_list = book_list_box[0].text.strip().split('\n ')
+
 ### foldermaker - 이거 주소도 변수로 받는걸로 바꾸자
-def foldermaker(book_list):
+def foldermaker(juso, book_list):
     for i in range(len(book_list)):
         book_name = book_list[i]
-        if not os.path.exists(f'/Users/hyunwoongyun/yurim_project/{i+1}. {book_name}'):
-            os.mkdir(f'/Users/hyunwoongyun/yurim_project/{i+1}. {book_name}')
-foldermaker(book_list)
+        if not os.path.exists(f'{juso}/{i+1}. {book_name}'):
+            os.mkdir(f'{juso}/{i+1}. {book_name}')
+
+foldermaker(juso, book_list)
+
 #### chaptermaker
-def chaptermaker(book_list, chapter_list):
+def chaptermaker(juso, book_list):
     for i in range(len(book_list)):
-        book_name = book_list[0]
+        book_name = book_list[i]
+        if not os.path.exists(f'{juso}/{i+1}. {book_name}'):
+            os.mkdir(f'{juso}/{i+1}. {book_name}')
         driver.find_element(By.LINK_TEXT, book_name).click()
+        time.sleep(2)
         chapterlists = driver.find_elements_by_css_selector('tr')
         chapterlists.pop(0)
         chapterlists.pop(0)
-        for i in lsttest:
-            print(i.text)
-            print('&')
+        for chapter in chapterlists:
+            chapter_name = chapter.text
+            print(chapter_name)
+            if len(chapter_name) < 6: # 총서, 부록 등일 경우
+                os.mkdir(f'{juso}/{i+1}. {book_name}/{chapter_name}')
+            else: # 누구 몇 년일 경우
+                chapterwords = chapter_name.split(' ')
+                os.mkdir(f'{juso}/{i+1}. {book_name}/{chapterwords[0]} {chapterwords[1]}')
+        driver.back()
+        time.sleep(2)# time.sleep 안넣어주면 얻어오는게 꼬임.
 
+book_list
+chaptermaker(juso, book_list)
+
+driver.get(url)
