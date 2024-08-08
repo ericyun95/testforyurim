@@ -162,8 +162,10 @@ foldermaker(juso, book_list)
 
 #### chaptermaker
 def chaptermaker(juso, book_list):
+    book_and_chapter = {}
     for i in range(len(book_list)):
         book_name = book_list[i]
+        chapter_list = []
         if not os.path.exists(f'{juso}/{i+1}. {book_name}'):
             os.mkdir(f'{juso}/{i+1}. {book_name}')
         driver.find_element(By.LINK_TEXT, book_name).click()
@@ -176,13 +178,34 @@ def chaptermaker(juso, book_list):
             print(chapter_name)
             if len(chapter_name) < 6: # 총서, 부록 등일 경우
                 os.mkdir(f'{juso}/{i+1}. {book_name}/{chapter_name}')
+                chapter_list.append(chapter_name)
             else: # 누구 몇 년일 경우
                 chapterwords = chapter_name.split(' ')
                 os.mkdir(f'{juso}/{i+1}. {book_name}/{chapterwords[0]} {chapterwords[1]}')
+                chapname = chapterwords[0]+' '+chapterwords[1]
+                chapter_list.append(chapname)
+        book_and_chapter[book_name]=chapter_list
         driver.back()
         time.sleep(2)# time.sleep 안넣어주면 얻어오는게 꼬임.
-
+    return book_and_chapter
 book_list
-chaptermaker(juso, book_list)
+book_and_chapter = chaptermaker(juso, book_list) # ex) book - 태조실록, chapter - 총서, 태조 1년.......
+book_and_chapter
+def cnbscraper(): #총서, 부록 수집
+
+def yearscraper(): #연도별 수집
+
+
+
+def scraper(juso, book_and_chapter):
+    king_number = 1
+    books = list(book_and_chapter.keys())
+    chapter_list = book_and_chapter[books[king_number-1]]
+    for chapter in chapter_list:
+        if chapter in ['총서', '부록']:
+            cnbscraper()
+        else : 
+            yearscreaper()
+
 
 driver.get(url)
