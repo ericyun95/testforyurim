@@ -229,7 +229,10 @@ def yearscraper(): #연도별 수집
     time.sleep(3)
     webdriver.ActionChains(driver).send_keys(Keys.ESCAPE).perform() #인쇄 팝업 제거용
     driver.execute_script('window.scrollTo(0, document.body.scrollHeight)')
-
+    a = driver.find_elements_by_class_name('content_text_body.content_scroll.scroll_area.para_block')
+    len(a)
+    a[3].text
+    print([i.text for i in a])
     time.sleep(1)
     #webdriver.ActionChains(driver).send_keys(Keys.ESCAPE).perform()
     #driver.find_element_by_class_name('cancel-button').click()
