@@ -222,7 +222,18 @@ def cnbscraper(juso, book_now, chapter): #총서, 부록 수집
 driver.quit()
 
 def yearscraper(): #연도별 수집
-    pass
+    print_buttons = driver.find_elements_by_class_name('nodeView_print')
+    print_buttons[0].click()
+    time.sleep(3)
+    driver.switch_to.window(driver.window_handles[1])
+    time.sleep(3)
+    webdriver.ActionChains(driver).send_keys(Keys.ESCAPE).perform() #인쇄 팝업 제거용
+    driver.execute_script('window.scrollTo(0, document.body.scrollHeight)')
+
+    time.sleep(1)
+    #webdriver.ActionChains(driver).send_keys(Keys.ESCAPE).perform()
+    #driver.find_element_by_class_name('cancel-button').click()
+    driver.close()
 
 
 def scraper(juso, book_and_chapter):
