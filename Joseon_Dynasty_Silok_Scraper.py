@@ -195,9 +195,9 @@ book_and_chapter
 def cnbscraper(juso, book_now, chapter): #총서, 부록 수집
     chonglist = driver.find_elements_by_css_selector('tr')
     chonglist.pop(0)
-    print([i.text for i in chonglist])
-    for title in chonglist:
-        titletext = title.text
+    titlelist = [i.text for i in chonglist].copy()
+    for title in titlelist:
+        titletext = title
         driver.find_element(By.LINK_TEXT, titletext).click()
         time.sleep(3)
         driver.execute_script('window.scrollTo(0, 3000000)')
@@ -215,14 +215,14 @@ def cnbscraper(juso, book_now, chapter): #총서, 부록 수집
         except:
             pass
         driver.back()
-        time.sleep(2)
+        time.sleep(5)
 
 
 
-
+driver.quit()
 
 def yearscraper(): #연도별 수집
-
+    pass
 
 
 def scraper(juso, book_and_chapter):
@@ -235,7 +235,7 @@ def scraper(juso, book_and_chapter):
             cnbscraper()
             driver.back()
         else : 
-            yearscreaper()
+            yearscraper()
             driver.back()
 
 
