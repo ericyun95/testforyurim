@@ -221,22 +221,50 @@ def cnbscraper(juso, book_now, chapter): #총서, 부록 수집
 
 driver.quit()
 
-def yearscraper(): #연도별 수집
+def yearscraper(booknyearjuso): #연도별 수집
     print_buttons = driver.find_elements_by_class_name('nodeView_print')
-    print_buttons[0].click()
-    time.sleep(3)
-    driver.switch_to.window(driver.window_handles[1])
-    time.sleep(3)
-    webdriver.ActionChains(driver).send_keys(Keys.ESCAPE).perform() #인쇄 팝업 제거용
-    driver.execute_script('window.scrollTo(0, document.body.scrollHeight)')
-    a = driver.find_elements_by_class_name('content_text_body.content_scroll.scroll_area.para_block')
-    len(a)
-    a[3].text
-    print([i.text for i in a])
-    time.sleep(1)
-    #webdriver.ActionChains(driver).send_keys(Keys.ESCAPE).perform()
-    #driver.find_element_by_class_name('cancel-button').click()
-    driver.close()
+    print_buttonsnum = len(print_buttons)
+    for i in range(print_buttonsnum):
+        print_buttons = driver.find_elements_by_class_name('nodeView_print')
+        print_buttons[i].click()
+        time.sleep(3)
+        driver.switch_to.window(driver.window_handles[1])
+        time.sleep(5)
+        webdriver.ActionChains(driver).send_keys(Keys.ESCAPE).perform() #인쇄 팝업 제거용
+        time.sleep(1)
+        driver.execute_script('window.scrollTo(0, document.body.scrollHeight)')
+        a = driver.find_elements_by_class_name('content_text_body.content_scroll.scroll_area.para_block')
+        len(a)
+        a[0].text
+        import re
+        for i in a:
+            print(i.text)
+            print('------')
+        text = a.pop(0).text.split(' ')
+        month = text[-1]
+        if not os.path.exists(f'{booknyearjuso}/{month}'):
+                os.mkdir(f'{booknyearjuso}/{month}')
+        for thing in a:
+            thingtext = thing.text
+            try: 
+                int(thingtext[0])
+                thingtitle = thingtext.split('\n')[0]
+                with open(f'{booknyearjuso}/{month}/{thingtitle}.txt', 'w') as f:
+                    f.write(thingtitle)
+            except:
+                pass
+        time.sleep(1)
+        driver.close()
+        driver.switch_to.window(driver.window_handles[0])
+
+
+booknyearjuso  = '/Users/hyunwoongyun/yurim_project/1. 태조실록(太祖實錄)/태조 1년'
+yearscraper(booknyearjuso)
+driver.quit()
+
+
+
+
 
 
 def scraper(juso, book_and_chapter):
