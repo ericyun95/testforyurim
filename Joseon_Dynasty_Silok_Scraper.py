@@ -151,7 +151,8 @@ book_list_box = driver.find_elements_by_xpath('/html/body/div[2]/section[2]/sect
 #서명
 book_list = book_list_box[0].text.strip().split('\n ')
 
-### foldermaker - 이거 주소도 변수로 받는걸로 바꾸자
+### foldermaker ################################################################################################################
+
 def foldermaker(juso, book_list):
     for i in range(len(book_list)):
         book_name = book_list[i]
@@ -160,7 +161,8 @@ def foldermaker(juso, book_list):
 
 foldermaker(juso, book_list)
 
-#### chaptermaker
+#### chaptermaker#########################################################################################################################################
+
 def chaptermaker(juso, book_list):
     book_and_chapter = {}
     for i in range(len(book_list)):
@@ -192,6 +194,8 @@ book_list
 book_and_chapter = chaptermaker(juso, book_list) # ex) book - 태조실록, chapter - 총서, 태조 1년.......
 book_and_chapter
 
+############################################################################################################
+
 def cnbscraper(juso, book_now, chapter): #총서, 부록 수집
     chonglist = driver.find_elements_by_css_selector('tr')
     chonglist.pop(0)
@@ -217,9 +221,7 @@ def cnbscraper(juso, book_now, chapter): #총서, 부록 수집
         driver.back()
         time.sleep(5)
 
-
-
-driver.quit()
+############################################################################################################
 
 def yearscraper(booknyearjuso): #연도별 수집
     print_buttons = driver.find_elements_by_class_name('nodeView_print')
@@ -256,29 +258,27 @@ def yearscraper(booknyearjuso): #연도별 수집
         time.sleep(1)
         driver.close()
         driver.switch_to.window(driver.window_handles[0])
-
-
+    driver.quit()
+################################################################################################################################################
 booknyearjuso  = '/Users/hyunwoongyun/yurim_project/1. 태조실록(太祖實錄)/태조 1년'
 yearscraper(booknyearjuso)
 driver.quit()
-
-
-
-
-
-
+################################################################################################################################################
 def scraper(juso, book_and_chapter):
     king_number = 1
     books = list(book_and_chapter.keys())
     book_now = books[king_number-1]
     chapter_list = book_and_chapter[book_now]
     for chapter in chapter_list:
+        booknyearjuso = juso + '/' + book_now + '/' + chapter
         if chapter in ['총서', '부록']:
-            cnbscraper()
+            driver.find_element(By.LINK_TEXT, chapter).click()
+            cnbscraper(booknyearjuso)
             driver.back()
         else : 
-            yearscraper()
+            driver.find_element(By.LINK_TEXT, chapter).click()
+            yearscraper(booknyearjuso)
             driver.back()
-
+    driver.back()
 
 driver.get(url)
