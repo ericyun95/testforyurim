@@ -1,4 +1,4 @@
-# testforyurim - 유림프로젝트 연습용(8월)
+# testforyurim - 유림프로젝트 연습용
 
 
 
