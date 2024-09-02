@@ -1,17 +1,6 @@
 #Joseon Dynasty Silok Scraper
 # 3.9.13('base': conda로 실행)
 
-print("JDS Scraper")
-import sys
-import selenium
-selenium.__version__
-from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.common.action_chains import ActionChains
-import time
-import os
 # ChromeDriver 경로 설정
 chrome_driver_path = '/Users/hyunwoongyun/Downloads/chromedriver-mac-x64/chromedriver'
 # 제 3자 보안 설정 해줘야 열림
@@ -147,10 +136,11 @@ options = webdriver.ChromeOptions()
 options.add_argument('--disable-gpu')
 driver = webdriver.Chrome(executable_path=chrome_driver_path, options=options)
 driver.get(url)
+time.sleep(3)
 book_list_box = driver.find_elements_by_xpath('/html/body/div[2]/section[2]/section[1]/div/div[2]/ul/li/ul')
 #서명
 book_list = book_list_box[0].text.strip().split('\n ')
-
+print(book_list)
 ### foldermaker ################################################################################################################
 
 def foldermaker(juso, book_list):
@@ -192,7 +182,7 @@ def chaptermaker(juso, book_list):
     return book_and_chapter
 book_list
 book_and_chapter = chaptermaker(juso, book_list) # ex) book - 태조실록, chapter - 총서, 태조 1년.......
-book_and_chapter
+print(book_and_chapter)
 
 ############################################################################################################
 
@@ -200,19 +190,19 @@ def cnbscraper(juso, book_now, chapter): #총서, 부록 수집
     chonglist = driver.find_elements_by_css_selector('tr')
     chonglist.pop(0)
     titlelist = [i.text for i in chonglist].copy()
-    for title in titlelist:
-        titletext = title
+    for i in range(len(titlelist)):
+        titletext = titlelist[i]
         driver.find_element(By.LINK_TEXT, titletext).click()
         time.sleep(3)
         driver.execute_script('window.scrollTo(0, 3000000)')
         wordtext = driver.find_elements_by_class_name('text_body')[0].text
         wordtext
-        with open(f'/Users/hyunwoongyun/yurim_project/test{titletext}.txt', 'w') as f:
+        with open(f'{juso}/1. {book_now}/{chapter}/{i+1}. {titletext}.txt', 'w') as f:
             f.write(wordtext)
         try:
             gakju = driver.find_elements_by_class_name('jusok-dl')
             if gakju:
-                with open(f'/Users/hyunwoongyun/yurim_project/test{title.text}.txt', 'a') as f:
+                with open(f'{juso}/1. {book_now}/{chapter}/{i+1}. {titletext}.txt', 'a') as f:
                     for i in gakju:
                         f.write('\n')
                         f.write(i.text)
@@ -221,6 +211,19 @@ def cnbscraper(juso, book_now, chapter): #총서, 부록 수집
         driver.back()
         time.sleep(5)
 
+
+
+bookkeylist = list(book_and_chapter.keys())
+book_now = bookkeylist[0]
+chapter = book_and_chapter[book_now][0]
+print(book_now, chapter)
+cnbscraper(juso, book_now, chapter)  ## 태조실록 총서 테스트 완료
+
+book_now = bookkeylist[0]
+chapter = book_and_chapter[book_now][-1]
+cnbscraper(juso, book_now, chapter) ## 태조실록 부록 테스트
+
+## 위 두개 테스트 완료. 실시할때에는 부록과 총서 페이지에 들어가서 함수 실행. 들어가는 과정은 스크래퍼 본 함수에 실을 예정
 ############################################################################################################
 
 def yearscraper(booknyearjuso): #연도별 수집
