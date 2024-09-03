@@ -263,8 +263,7 @@ def yearscraper(booknyearjuso): #연도별 수집
         driver.switch_to.window(driver.window_handles[0])
     driver.quit()
 ################################################################################################################################################
-booknyearjuso  = '/Users/hyunwoongyun/yurim_project/1. 태조실록(太祖實錄)/태조 1년'
-yearscraper(booknyearjuso)
+
 driver.quit()
 ################################################################################################################################################
 def scraper(juso, book_and_chapter):
