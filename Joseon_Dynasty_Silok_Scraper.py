@@ -180,6 +180,8 @@ def chaptermaker(juso, book_list):
         driver.back()
         time.sleep(2)# time.sleep 안넣어주면 얻어오는게 꼬임.
     return book_and_chapter
+
+
 book_list
 book_and_chapter = chaptermaker(juso, book_list) # ex) book - 태조실록, chapter - 총서, 태조 1년.......
 print(book_and_chapter)
@@ -202,7 +204,7 @@ def cnbscraper(juso, book_now, chapter): #총서, 부록 수집
         try:
             gakju = driver.find_elements_by_class_name('jusok-dl')
             if gakju:
-                with open(f'{juso}/1. {book_now}/{chapter}/{i+1}. {titletext}.txt', 'a') as f:
+                with open(f'{juso}/{book_now}/{chapter}/{i+1}. {titletext}.txt', 'a') as f:
                     for i in gakju:
                         f.write('\n')
                         f.write(i.text)
@@ -211,19 +213,6 @@ def cnbscraper(juso, book_now, chapter): #총서, 부록 수집
         driver.back()
         time.sleep(5)
 
-
-
-bookkeylist = list(book_and_chapter.keys())
-book_now = bookkeylist[0]
-chapter = book_and_chapter[book_now][0]
-print(book_now, chapter)
-cnbscraper(juso, book_now, chapter)  ## 태조실록 총서 테스트 완료
-
-book_now = bookkeylist[0]
-chapter = book_and_chapter[book_now][-1]
-cnbscraper(juso, book_now, chapter) ## 태조실록 부록 테스트
-
-## 위 두개 테스트 완료. 실시할때에는 부록과 총서 페이지에 들어가서 함수 실행. 들어가는 과정은 스크래퍼 본 함수에 실을 예정
 ############################################################################################################
 
 def yearscraper(booknyearjuso): #연도별 수집
@@ -262,9 +251,7 @@ def yearscraper(booknyearjuso): #연도별 수집
         driver.close()
         driver.switch_to.window(driver.window_handles[0])
     driver.quit()
-################################################################################################################################################
 
-driver.quit()
 ################################################################################################################################################
 def scraper(juso, book_and_chapter):
     king_number = 1
