@@ -21,47 +21,6 @@ driver = webdriver.Chrome(executable_path=chrome_driver_path, options=options)
 # 크롬드라이버 사용이유 = API 사용시 전문 확보 불가
 
 
-url = 'https://db.itkc.or.kr/'
-driver.get(url)
-
-# 사이트 로드 대기
-time.sleep(3)  # 페이지가 완전히 로드될 때까지 잠시 대기
-
-# 조선왕조실록으로 이동
-driver.find_element(By.LINK_TEXT, '조선왕조실록').click()
-time.sleep(3)
-url2 = 'https://db.itkc.or.kr/dir/item?itemId=JT#dir/list?itemId=JT&gubun=book&pageIndex=1&pageUnit=50'
-driver.get(url2)
-# dataId=ITKC_JT_A0 이런식으로 이어지는것 발견, 확인해서 쓰면 좋을듯.
-
-book_list_box = driver.find_elements_by_xpath('/html/body/div[2]/section[2]/section[1]/div/div[2]/ul/li/ul')
-# 서명
-book_list = book_list_box[0].text.strip().split('\n ')
-# 서명당 클릭후 복귀
-for name in book_list:
-    driver.find_element(By.LINK_TEXT, name).click()
-    time.sleep(3)
-    driver.back()
-    time.sleep(3)
-book_list
-driver.quit()
-driver.find_element(By.LINK_TEXT, book_list[0]).click()
-lsttest = driver.find_elements_by_css_selector('tr')
-lsttest[0].text
-for i in lsttest:
-    print(i.text)
-    print('&')
-lsttest.pop(0)
-len(lsttest)
-teststr = lsttest[3].text.split()
-kingnameyear = teststr[0]+' '+teststr[1]
-driver.find_element(By.LINK_TEXT, lsttest[2].text).click()
-# 총서 부록과 n년 텍스트 가져오는 코드는 달라야 함
-lsttest2 = driver.find_elements_by_css_selector('tr')
-for i in lsttest2:
-    print(i.text)
-len(lsttest2)
-lsttest2[2].text.split('\n')
 
 # 태조실록 총서 첫번째 링크는 다음과 같음
 # https://db.itkc.or.kr/dir/item?itemId=JT#dir/node?grpId=&itemId=JT&gubun=book&depth=3&cate1=&cate2=&dataGubun=%EC%B5%9C%EC%A2%85%EC%A0%95%EB%B3%B4&dataId=ITKC_JT_A0_000_000_000_00010
@@ -128,6 +87,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.action_chains import ActionChains
 import time
 import os
+import re
 
 juso = '/Users/hyunwoongyun/yurim_project'
 chrome_driver_path = '/Users/hyunwoongyun/Downloads/chromedriver-mac-x64/chromedriver'
@@ -199,7 +159,7 @@ def cnbscraper(juso, book_now, chapter): #총서, 부록 수집
         driver.execute_script('window.scrollTo(0, 3000000)')
         wordtext = driver.find_elements_by_class_name('text_body')[0].text
         wordtext
-        with open(f'{juso}/1. {book_now}/{chapter}/{i+1}. {titletext}.txt', 'w') as f:
+        with open(f'{juso}/{book_now}/{chapter}/{i+1}. {titletext}.txt', 'w') as f:
             f.write(wordtext)
         try:
             gakju = driver.find_elements_by_class_name('jusok-dl')
@@ -215,59 +175,68 @@ def cnbscraper(juso, book_now, chapter): #총서, 부록 수집
 
 ############################################################################################################
 
-def yearscraper(booknyearjuso): #연도별 수집
+def yearscraper(juso, book_now, chapter): #연도별 수집
     print_buttons = driver.find_elements_by_class_name('nodeView_print')
+    print_b = print_buttons.copy()
     print_buttonsnum = len(print_buttons)
     for i in range(print_buttonsnum):
-        print_buttons = driver.find_elements_by_class_name('nodeView_print')
-        print_buttons[i].click()
-        time.sleep(3)
+        print_b[i].click()
+        time.sleep(6)
         driver.switch_to.window(driver.window_handles[1])
-        time.sleep(5)
-        webdriver.ActionChains(driver).send_keys(Keys.ESCAPE).perform() #인쇄 팝업 제거용
-        time.sleep(1)
+        webdriver.ActionChains(driver).send_keys(Keys.ESCAPE).perform() #인쇄 팝업 제거
+        time.sleep(2)
+        driver.switch_to.window(driver.window_handles[1])
         driver.execute_script('window.scrollTo(0, document.body.scrollHeight)')
         a = driver.find_elements_by_class_name('content_text_body.content_scroll.scroll_area.para_block')
-        len(a)
-        a[0].text
-        import re
-        for i in a:
-            print(i.text)
-            print('------')
         text = a.pop(0).text.split(' ')
         month = text[-1]
-        if not os.path.exists(f'{booknyearjuso}/{month}'):
-                os.mkdir(f'{booknyearjuso}/{month}')
+        if not os.path.exists(f'{juso}/{book_now}/{chapter}/{month}'):
+                os.mkdir(f'{juso}/{book_now}/{chapter}/{month}')
         for thing in a:
             thingtext = thing.text
             try: 
                 int(thingtext[0])
                 thingtitle = thingtext.split('\n')[0]
-                with open(f'{booknyearjuso}/{month}/{thingtitle}.txt', 'w') as f:
+                with open(f'{juso}/{book_now}/{chapter}/{month}/{thingtitle}.txt', 'w') as f:
                     f.write(thingtitle)
             except:
                 pass
         time.sleep(1)
         driver.close()
         driver.switch_to.window(driver.window_handles[0])
-    driver.quit()
+
+book_now = '1. ' + book_list[0]
+book_now
+chapter = book_and_chapter[book_list[0]][1]
+chapter
+yearscraper(juso, book_now, chapter)
+
 
 ################################################################################################################################################
 def scraper(juso, book_and_chapter):
-    king_number = 1
     books = list(book_and_chapter.keys())
-    book_now = books[king_number-1]
-    chapter_list = book_and_chapter[book_now]
-    for chapter in chapter_list:
-        booknyearjuso = juso + '/' + book_now + '/' + chapter
-        if chapter in ['총서', '부록']:
+    king_number = 1
+    while books:
+        king = books.pop(0)
+        book_now = f'{king_number}. {king}'
+        chapter_list = book_and_chapter[king]
+        driver.find_element(By.LINK_TEXT, king).click()
+        time.sleep(3)
+        for chapter in chapter_list:
             driver.find_element(By.LINK_TEXT, chapter).click()
-            cnbscraper(booknyearjuso)
+            if chapter in ['총서', '부록']:
+                cnbscraper(juso, book_now, chapter)
+            else : 
+                yearscraper(juso, book_now, chapter)
             driver.back()
-        else : 
-            driver.find_element(By.LINK_TEXT, chapter).click()
-            yearscraper(booknyearjuso)
-            driver.back()
-    driver.back()
+        driver.back()
+        king_number += 1
 
-driver.get(url)
+book_and_chapter
+juso
+scraper(juso, book_and_chapter)
+
+driver.quit()
+# juso, book_now, chapter - 폴더 주소, 책 이름, 챕터
+# scraper 본 함수 에서 book_now에 kingnumber 붙여서 간다
+# 
