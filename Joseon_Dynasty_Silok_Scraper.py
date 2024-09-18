@@ -180,7 +180,11 @@ def yearscraper(juso, book_now, chapter): #연도별 수집
     print_b = print_buttons.copy()
     print_buttonsnum = len(print_buttons)
     for i in range(print_buttonsnum):
-        print_b[i].click()
+        try:
+            print_b[i].click()
+        except:
+            driver.execute_script('window.scrollTo(0, document.body.scrollHeight)')
+            print_b[i].click()
         time.sleep(6)
         driver.switch_to.window(driver.window_handles[1])
         webdriver.ActionChains(driver).send_keys(Keys.ESCAPE).perform() #인쇄 팝업 제거
@@ -213,9 +217,8 @@ yearscraper(juso, book_now, chapter)
 
 
 ################################################################################################################################################
-def scraper(juso, book_and_chapter):
+def scraper(juso, book_and_chapter, king_number=1):
     books = list(book_and_chapter.keys())
-    king_number = 1
     while books:
         king = books.pop(0)
         book_now = f'{king_number}. {king}'
@@ -224,19 +227,25 @@ def scraper(juso, book_and_chapter):
         time.sleep(3)
         for chapter in chapter_list:
             driver.find_element(By.LINK_TEXT, chapter).click()
+            time.sleep(3)
             if chapter in ['총서', '부록']:
                 cnbscraper(juso, book_now, chapter)
             else : 
+                time.sleep(2)
+                driver.execute_script('window.scrollTo(0, document.body.scrollHeight)')
                 yearscraper(juso, book_now, chapter)
             driver.back()
+            time.sleep(3)
         driver.back()
+        time.sleep(3)
         king_number += 1
 
-book_and_chapter
+book_and_chapter_2 = book_and_chapter.copy()
+del book_and_chapter_2['정종실록(定宗實錄)']
+book_and_chapter_2
 juso
-scraper(juso, book_and_chapter)
+scraper(juso, book_and_chapter_2, 3)
 
 driver.quit()
 # juso, book_now, chapter - 폴더 주소, 책 이름, 챕터
 # scraper 본 함수 에서 book_now에 kingnumber 붙여서 간다
-# 
